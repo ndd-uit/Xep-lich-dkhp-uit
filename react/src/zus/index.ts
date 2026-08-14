@@ -5,14 +5,7 @@ import { Mutate, StoreApi, create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { tracker } from '..';
 import { ClassModel, ClassModelOriginal } from '../types';
-import { calcTongSoTC, isSameAgGridRowId } from '../utils';
-
-type UtilsStore = {
-  hasAdBlocker: boolean;
-};
-export const useUtilsStore = create<UtilsStore>()((set) => ({
-  hasAdBlocker: false,
-}));
+import { calcTongSoTC, hasFixedSchedule, isSameAgGridRowId } from '../utils';
 
 type StoreState = {
   isDrawerOpen: boolean;
@@ -162,5 +155,5 @@ export const selectSelectedClassesBuoc3 = memoize((state: TkbStore): ClassModel[
 export const selectTongSoTcSelected = (state: TkbStore) => calcTongSoTC(selectSelectedClasses(state));
 export const selectTongSoTcBuoc3 = (state: TkbStore) => calcTongSoTC(selectSelectedClassesBuoc3(state));
 export const selectPhanLoaiHocTrenTruong = memoize((state: TkbStore): [ClassModel[], ClassModel[]] => {
-  return partition(selectSelectedClassesBuoc3(state), { Thu: '*' });
+  return partition(selectSelectedClassesBuoc3(state), (classModel) => !hasFixedSchedule(classModel));
 });

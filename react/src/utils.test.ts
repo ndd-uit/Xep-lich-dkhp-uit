@@ -1,5 +1,5 @@
 import { ClassModel } from './types';
-import { findOverlapedClasses, hasOverlapSchedule } from './utils';
+import { copyTextToClipboard, findOverlapedClasses, hasFixedSchedule, hasOverlapSchedule } from './utils';
 
 const createClass = (overrides: Partial<ClassModel>): ClassModel => ({
   STT: 1,
@@ -29,6 +29,13 @@ const createClass = (overrides: Partial<ClassModel>): ClassModel => ({
 });
 
 describe('schedule overlap', () => {
+  test('identifies classes without a fixed schedule', () => {
+    expect(hasFixedSchedule({ Thu: 'undefined', Tiet: 'undefined' })).toBe(false);
+    expect(hasFixedSchedule({ Thu: '', Tiet: '' })).toBe(false);
+    expect(hasFixedSchedule({ Thu: '*', Tiet: '*' })).toBe(false);
+    expect(hasFixedSchedule({ Thu: '2', Tiet: '1,2' })).toBe(true);
+  });
+
   test('allows selecting multiple classes whose schedules are undefined', () => {
     const firstClass = createClass({ MaLop: 'PRACTICE.1', Thu: 'undefined', Tiet: 'undefined' });
     const secondClass = createClass({ MaLop: 'PRACTICE.2', Thu: 'undefined', Tiet: 'undefined' });
@@ -52,5 +59,19 @@ describe('schedule overlap', () => {
     const candidateClass = createClass({ MaLop: 'PRACTICE.2', Thu: ' null ', Tiet: 'NaN' });
 
     expect(hasOverlapSchedule([selectedClass], candidateClass)).toBe(false);
+  });
+});
+
+describe('copyTextToClipboard', () => {
+  test('writes text through the Clipboard API', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+
+    await copyTextToClipboard('TKB-URL');
+
+    expect(writeText).toHaveBeenCalledWith('TKB-URL');
   });
 });

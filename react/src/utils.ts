@@ -32,6 +32,14 @@ export function extractListMaLop(classes: ClassModel[]) {
   return unique.map((it) => it.MaLop);
 }
 
+export const copyTextToClipboard = async (text: string): Promise<void> => {
+  if (!navigator.clipboard?.writeText) {
+    throw new Error('Trình duyệt không hỗ trợ sao chép vào clipboard.');
+  }
+
+  await navigator.clipboard.writeText(text);
+};
+
 export const getBuoiFromTiet = (tiet: ClassModel['Tiet']): Buoi => {
   if (tiet.includes('11')) return Buoi.Toi;
   if (/1|2|3|4|5/g.test(tiet)) return Buoi.Sang;
@@ -55,15 +63,29 @@ type TimeSlots = ValidTimeSlot[];
 
 const UNKNOWN_SCHEDULE_VALUES = new Set(['', 'undefined', 'null', 'nan']);
 
-const isUnknownScheduleValue = (value: string): boolean => {
-  return UNKNOWN_SCHEDULE_VALUES.has(value.trim().toLowerCase());
+const normalizeScheduleValue = (value: unknown): string =>
+  String(value ?? '')
+    .trim()
+    .toLowerCase();
+
+const isUnknownScheduleValue = (value: unknown): boolean => {
+  return UNKNOWN_SCHEDULE_VALUES.has(normalizeScheduleValue(value));
+};
+
+export const hasFixedSchedule = ({ Thu, Tiet }: Pick<ClassModel, 'Thu' | 'Tiet'>): boolean => {
+  return (
+    normalizeScheduleValue(Thu) !== '*' &&
+    normalizeScheduleValue(Tiet) !== '*' &&
+    !isUnknownScheduleValue(Thu) &&
+    !isUnknownScheduleValue(Tiet)
+  );
 };
 
 const getTimeSlots = ({ Thu, Tiet }: ClassModel): TimeSlots => {
   // Lớp online hoặc lớp thực hành chưa có lịch cố định không thể dùng để
   // kết luận trùng thời khóa biểu. Excel cells trống hiện được đọc thành
   // chuỗi "undefined", vì vậy cần xử lý cả các placeholder tương tự.
-  if (Thu === '*' || Tiet === '*' || isUnknownScheduleValue(Thu) || isUnknownScheduleValue(Tiet)) return [];
+  if (!hasFixedSchedule({ Thu, Tiet })) return [];
   return getDanhSachTiet(Tiet).map((tiet): ValidTimeSlot => `${Thu}-${tiet}`);
 };
 

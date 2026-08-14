@@ -4,7 +4,7 @@
 
 ## Yêu cầu
 
-- Node.js 22
+- Node.js 22.12 trở lên
 - npm 10 trở lên
 
 ## Phát triển local

@@ -3,10 +3,11 @@ import { IconButton, Tooltip, useTheme } from '@mui/material';
 import type { InputBaseProps, Theme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import { enqueueSnackbar } from 'notistack';
 import { forwardRef, useMemo } from 'react';
 import type { HTMLAttributes } from 'react';
 import { tracker } from '../..';
-import { extractListMaLop } from '../../utils';
+import { copyTextToClipboard, extractListMaLop } from '../../utils';
 import { selectIsChiVeTkb, selectPhanLoaiHocTrenTruong, selectTextareaChiVeTkb, useTkbStore } from '../../zus';
 
 const getReadonlySx = (theme: Theme) => ({
@@ -28,6 +29,7 @@ const ClassListTextarea: InputBaseProps['inputComponent'] = forwardRef<
     </Tooltip>
   );
 });
+ClassListTextarea.displayName = 'ClassListTextarea';
 
 function useClassList() {
   const classes = useTkbStore(selectPhanLoaiHocTrenTruong);
@@ -78,9 +80,21 @@ function DanhSachLopInput() {
                   aria-label="Chia sẻ thời khóa biểu"
                   onClick={() => {
                     tracker.track('[page3] btn_chia_se_tkb_clicked');
-                    const newUrl = window.location.origin + window.location.pathname + '?self_selected=' + value;
-                    navigator.clipboard.writeText(newUrl);
-                    window.open(newUrl, Math.random()?.toString());
+                    const shareUrl = new URL(window.location.pathname, window.location.origin);
+                    shareUrl.searchParams.set('self_selected', value);
+                    const shareUrlString = shareUrl.toString();
+
+                    window.open(shareUrlString, '_blank', 'noopener,noreferrer');
+                    copyTextToClipboard(shareUrlString)
+                      .then(() => {
+                        enqueueSnackbar('Đã sao chép liên kết chia sẻ.', { variant: 'success' });
+                      })
+                      .catch((error) => {
+                        console.error('Không thể sao chép liên kết chia sẻ:', error);
+                        enqueueSnackbar('Đã mở liên kết chia sẻ nhưng không thể sao chép vào clipboard.', {
+                          variant: 'warning',
+                        });
+                      });
                   }}
                 >
                   <ShareIcon />

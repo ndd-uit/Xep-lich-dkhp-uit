@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="%BASE_URL%favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#006897" />
+    <meta name="description" content="Công cụ hỗ trợ sinh viên UIT chọn lớp và đăng ký học phần." />
+    <link rel="manifest" href="%BASE_URL%manifest.json" />
+    <title>Tool Đăng Ký Học Phần UIT</title>
+    <script>
+      // Khôi phục route được GitHub Pages chuyển tiếp qua public/404.html.
+      (function (locationInfo) {
+        if (!locationInfo.search) return;
+
+        var query = {};
+        locationInfo.search
+          .slice(1)
+          .split('&')
+          .forEach(function (value) {
+            var parts = value.split('=');
+            query[parts[0]] = parts.slice(1).join('=').replace(/~and~/g, '&');
+          });
+
+        if (query.p !== undefined) {
+          window.history.replaceState(
+            null,
+            '',
+            locationInfo.pathname.slice(0, -1) + (query.p || '') + (query.q ? '?' + query.q : '') + locationInfo.hash,
+          );
+        }
+      })(window.location);
+    </script>
+  </head>
+  <body>
+    <noscript>Bạn cần bật JavaScript để sử dụng ứng dụng này.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>

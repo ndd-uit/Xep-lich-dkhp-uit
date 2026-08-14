@@ -13,7 +13,5 @@ export const buildTracker = () => {
     log('>>track', eventName, properties);
   };
 
-  const updateProperty = (_key: string, _value: AllowedPropertyValues) => undefined;
-
-  return { track, updateProperty };
+  return { track };
 };

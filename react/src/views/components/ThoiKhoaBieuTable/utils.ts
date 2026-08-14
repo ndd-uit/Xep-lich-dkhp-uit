@@ -27,12 +27,25 @@ export const getTietIndex = (tietString: string): number => {
   return Number(tietString) - 1;
 };
 
-// Plagiarize from: https://github.com/gillyb/reimg/blob/master/reimg.js
-export const downloadFromCanvas = (canvasElement: HTMLCanvasElement, filename = 'thoikhoabieu.png') => {
+export const canvasToPngBlob = (canvasElement: HTMLCanvasElement): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    canvasElement.toBlob((blob) => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject(new Error('Không thể tạo ảnh PNG từ thời khóa biểu.'));
+      }
+    }, 'image/png');
+  });
+};
+
+export const downloadBlob = (blob: Blob, filename = 'thoikhoabieu.png') => {
+  const objectUrl = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = canvasElement.toDataURL();
+  a.href = objectUrl;
   a.download = filename;
   document.body.appendChild(a);
   a.click();
   a.remove();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
 };

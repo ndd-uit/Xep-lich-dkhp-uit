@@ -1,5 +1,5 @@
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { IconButton, Tooltip } from '@mui/material';
+import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import clsx from 'clsx';
 import { useLocation } from 'react-router-dom';
 import ImageIcon from '@mui/icons-material/Image';
@@ -50,11 +50,12 @@ function Render() {
 
   const location = useLocation();
   const isChiVeTkb = useTkbStore(selectIsChiVeTkb);
-  const { tkbTableRef, saveTkbImageToComputer, copyTkbImageToClipboard } = useProcessImageTkb();
+  const { tkbTableRef, isProcessingImage, saveTkbImageToComputer, copyTkbImageToClipboard } = useProcessImageTkb();
 
   const isInStep2 = location.pathname === ROUTES._2XepLop.path;
 
   const [areExtraButtonsShown, setAreExtraButtonsShown] = useState(false);
+  const redundantClasses = useMemo(() => redundant.flatMap((item) => item.new), [redundant]);
 
   // TODO: refactor the messy flow after writing tests
   if (isInStep2 && isChiVeTkb) {
@@ -82,26 +83,38 @@ function Render() {
       >
         <div className={clsx('extra-buttons', { 'extra-buttons-shown': areExtraButtonsShown })}>
           <Tooltip title="Tải hình ảnh TKB về máy" placement="left">
-            <IconButton onClick={saveTkbImageToComputer} color="primary">
-              <FileDownloadIcon />
+            <IconButton
+              aria-label="Tải ảnh thời khóa biểu"
+              disabled={isProcessingImage}
+              onClick={saveTkbImageToComputer}
+              color="primary"
+            >
+              {isProcessingImage ? <CircularProgress color="inherit" size={22} /> : <FileDownloadIcon />}
             </IconButton>
           </Tooltip>
           <Tooltip title="Sao chép hình ảnh TKB vào clipboard" placement="left">
-            <IconButton onClick={copyTkbImageToClipboard} color="primary">
+            <IconButton
+              aria-label="Sao chép ảnh thời khóa biểu"
+              disabled={isProcessingImage}
+              onClick={copyTkbImageToClipboard}
+              color="primary"
+            >
               <ImageIcon />
             </IconButton>
           </Tooltip>
         </div>
 
-        <div style={{ display: 'flex' }}>
-          {redundant
-            .flatMap((it) => it.new)
-            .map((lop, index) => (
-              <tr key={index}>
-                <ClassCell data={lop} isOutsideTable />
-              </tr>
-            ))}
-        </div>
+        {redundantClasses.length > 0 && (
+          <table className="redundant-classes-table">
+            <tbody>
+              {redundantClasses.map((lop) => (
+                <tr key={`${lop.MaLop}-${lop.Thu}-${lop.Tiet}`}>
+                  <ClassCell data={lop} isOutsideTable />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
         <table ref={tkbTableRef}>
           <TableHead />
           <tbody>
@@ -110,7 +123,7 @@ function Render() {
             ))}
             {khongHocTrenTruong.map((lop, index) => (
               <tr key={index}>
-                <ClassCell colSpan={7} data={lop} />
+                <ClassCell colSpan={7} data={lop} isOutsideTable />
               </tr>
             ))}
           </tbody>
@@ -123,11 +136,9 @@ function Render() {
 function Index() {
   return (
     <ErrorBoundary>
-      <ClassCellContext>
-        <PhanLoaiHocTrenTruongContext>
-          <Render />
-        </PhanLoaiHocTrenTruongContext>
-      </ClassCellContext>
+      <PhanLoaiHocTrenTruongContext>
+        <Render />
+      </PhanLoaiHocTrenTruongContext>
     </ErrorBoundary>
   );
 }

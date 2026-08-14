@@ -8,7 +8,7 @@ import reverse from 'lodash/reverse';
 import { useMemo, useState } from 'react';
 import { tracker } from '../../..';
 import { ClassModel } from '../../../types';
-import { isSameAgGridRowId, uniqMaLop } from '../../../utils';
+import { hasFixedSchedule, isSameAgGridRowId, uniqMaLop } from '../../../utils';
 import { selectIsChiVeTkb, selectSelectedClasses, selectSelectedClassesBuoc3, useTkbStore } from '../../../zus';
 import { usePhanLoaiHocTrenTruongContext } from './hooks';
 import './styles.css';
@@ -144,6 +144,11 @@ function ClassCell({ data, isOutsideTable = false, ...restProps }: Props) {
     );
   });
   const isRedundantRelated = redundantIndex > -1;
+  const scheduleLabel = hasFixedSchedule(data)
+    ? `Thứ ${Thu} Tiết ${Tiet}`
+    : Thu === '*'
+    ? 'Không có lịch học tại trường'
+    : 'Lịch học chưa xác định';
 
   return (
     <Tooltip title={isRedundantRelated ? 'Bị trùng TKB' : null}>
@@ -234,9 +239,7 @@ function ClassCell({ data, isOutsideTable = false, ...restProps }: Props) {
         {isOutsideTable && (
           <>
             <br />
-            <strong>
-              Thứ {Thu} Tiết {Tiet}
-            </strong>
+            <strong>{scheduleLabel}</strong>
             <br />
           </>
         )}

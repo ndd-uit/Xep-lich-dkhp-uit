@@ -22,6 +22,7 @@ import { tracker } from '../../..';
 import SoTinChi from '../../components/SoTinChi';
 import ThoiKhoaBieuTable from '../../components/ThoiKhoaBieuTable';
 import {
+  copyTextToClipboard,
   findOverlapedClasses,
   getAgGridRowId,
   getBuoiFromTiet,
@@ -490,7 +491,14 @@ export const useGridOptions = () => {
           name: `Copy text "${value}"`,
           action: () => {
             tracker.track('[page2] context_menu_copy_text_clicked', { text: value });
-            navigator.clipboard.writeText(value);
+            copyTextToClipboard(String(value))
+              .then(() => {
+                enqueueSnackbar('Đã sao chép nội dung.', { variant: 'success' });
+              })
+              .catch((error) => {
+                console.error('Không thể sao chép nội dung:', error);
+                enqueueSnackbar('Không thể sao chép nội dung vào clipboard.', { variant: 'error' });
+              });
           },
         });
       }

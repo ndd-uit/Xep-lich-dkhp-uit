@@ -1,6 +1,8 @@
 import { ClassModelOriginal } from 'types';
 
 export function arrayToTkbObject(array: any[]): ClassModelOriginal {
+  const toCellString = (value: unknown): string => String(value ?? '').trim();
+
   // convert excel based date (1989-Dec-30) to Js based date (1970-Jan-01)
   function convertExcelDateToStringDate(excelDate: number) {
     // in Excel, based date is 1989-Dec-30: https://stackoverflow.com/questions/36378476/why-does-the-date-returns-31-12-1899-when-1-is-passed-to-it
@@ -15,6 +17,12 @@ export function arrayToTkbObject(array: any[]): ClassModelOriginal {
     );
   }
 
+  const toDateString = (value: unknown): string => {
+    if (typeof value === 'string') return value.trim();
+    if (typeof value === 'number' && Number.isFinite(value)) return convertExcelDateToStringDate(value);
+    return '';
+  };
+
   return {
     STT: array[0],
     MaMH: array[1],
@@ -26,17 +34,17 @@ export function arrayToTkbObject(array: any[]): ClassModelOriginal {
     SoTc: parseInt(array[7]),
     ThucHanh: array[8],
     HTGD: array[9],
-    Thu: String(array[10]),
-    Tiet: String(array[11]),
-    CachTuan: String(array[12]),
+    Thu: toCellString(array[10]),
+    Tiet: toCellString(array[11]),
+    CachTuan: toCellString(array[12]),
     PhongHoc: array[13],
-    KhoaHoc: String(array[14]),
-    HocKy: String(array[15]),
-    NamHoc: String(array[16]),
+    KhoaHoc: toCellString(array[14]),
+    HocKy: toCellString(array[15]),
+    NamHoc: toCellString(array[16]),
     HeDT: array[17],
     KhoaQL: array[18],
-    NBD: typeof array[19] === 'string' ? array[19] : convertExcelDateToStringDate(array[19]),
-    NKT: typeof array[20] === 'string' ? array[20] : convertExcelDateToStringDate(array[20]),
+    NBD: toDateString(array[19]),
+    NKT: toDateString(array[20]),
     GhiChu: array[21],
     NgonNgu: array[22],
   };

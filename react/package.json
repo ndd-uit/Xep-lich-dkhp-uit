@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=20",
+    "node": ">=22.12",
     "npm": ">=10"
   },
   "dependencies": {
@@ -13,9 +13,9 @@
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "^5.14.16",
     "@mui/styles": "^5.14.16",
-    "ag-grid-community": "^30.2.1",
-    "ag-grid-enterprise": "^30.2.1",
-    "ag-grid-react": "^30.2.1",
+    "ag-grid-community": "^31.3.4",
+    "ag-grid-enterprise": "^31.3.4",
+    "ag-grid-react": "^31.3.4",
     "clsx": "^2.0.0",
     "constate": "^3.3.2",
     "html2canvas": "^1.4.1",
@@ -27,48 +27,41 @@
     "react-hotkeys-hook": "^4.4.3",
     "react-router-dom": "^5.2.0",
     "use-debounce": "^7.0.0",
-    "xlsx": "^0.17.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zustand": "^4.4.6"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
-    "test": "react-scripts test",
-    "test:ci": "react-scripts test --watchAll=false --runInBand",
+    "start": "vite",
+    "build": "vite build",
+    "test": "vitest",
+    "test:ci": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --max-warnings=0 --color \"./src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix --color \"./src/**/*.{js,jsx,ts,tsx}\"",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md}\" \"public/**/*.{html,json}\" \"*.{js,json,md}\" \"../README.md\" \"../.github/**/*.yml\"",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css,md}\" \"public/**/*.{html,json}\" \"*.{js,json,md}\" \"../README.md\" \"../.github/**/*.yml\"",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test:ci",
-    "eject": "react-scripts eject"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md}\" \"public/**/*.{html,json}\" \"*.{js,ts,mts,json,html,md}\" \"../README.md\" \"../.github/**/*.yml\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css,md}\" \"public/**/*.{html,json}\" \"*.{js,ts,mts,json,html,md}\" \"../README.md\" \"../.github/**/*.yml\"",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test:ci"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^12.1.5",
-    "@types/jest": "^26.0.24",
     "@types/lodash": "^4.17.25",
-    "@types/node": "^16.4.10",
+    "@types/node": "^22.20.1",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.1.8",
-    "cross-env": "^7.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.67.0",
+    "@typescript-eslint/parser": "^8.67.0",
+    "@vitejs/plugin-react": "^6.0.5",
     "eslint": "^8.57.1",
-    "eslint-config-react-app": "^7.0.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "jsdom": "^29.1.1",
     "prettier": "^2.3.2",
-    "react-scripts": "^5.0.1",
-    "typescript": "^4.3.5"
+    "typescript": "^5.9.3",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
   }
 }

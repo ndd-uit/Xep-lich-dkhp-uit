@@ -6,7 +6,7 @@ import { tracker } from '../../..';
 import { ClassModel } from '../../../types';
 import { findOverlapedClasses, getDanhSachTiet } from '../../../utils';
 import { selectPhanLoaiHocTrenTruong, useTkbStore } from '../../../zus';
-import { downloadFromCanvas, getTietIndex } from './utils';
+import { canvasToPngBlob, downloadBlob, getTietIndex } from './utils';
 
 /* // Uncomment to see how rowData can be conducted:
 const rowDataExample = [
@@ -104,30 +104,71 @@ export const [PhanLoaiHocTrenTruongContext, usePhanLoaiHocTrenTruongContext] = c
 
 export const useProcessImageTkb = () => {
   const tkbTableRef = React.useRef<HTMLTableElement>(null);
+  const [isProcessingImage, setIsProcessingImage] = React.useState(false);
+
+  const createTkbImageBlob = React.useCallback(async (): Promise<Blob> => {
+    if (!tkbTableRef.current) throw new Error('Không tìm thấy thời khóa biểu để tạo ảnh.');
+
+    const canvas = await html2canvas(tkbTableRef.current, {
+      backgroundColor: '#ffffff',
+      logging: false,
+      scale: Math.min(window.devicePixelRatio || 1, 2),
+      useCORS: true,
+    });
+
+    return canvasToPngBlob(canvas);
+  }, []);
 
   const saveTkbImageToComputer = React.useCallback(async () => {
-    if (!tkbTableRef.current) return;
     tracker.track('[tkb_table] btn_save_image_clicked');
-    const canvas = await html2canvas(tkbTableRef.current);
-    downloadFromCanvas(canvas, 'thoikhoabieu.png');
-  }, []);
+    setIsProcessingImage(true);
+
+    try {
+      const blob = await createTkbImageBlob();
+      downloadBlob(blob);
+      enqueueSnackbar('Đã tải ảnh thời khóa biểu.', { variant: 'success' });
+    } catch (error) {
+      console.error('Không thể tải ảnh thời khóa biểu:', error);
+      enqueueSnackbar('Không thể tạo ảnh thời khóa biểu. Vui lòng thử lại.', { variant: 'error' });
+    } finally {
+      setIsProcessingImage(false);
+    }
+  }, [createTkbImageBlob]);
 
   const copyTkbImageToClipboard = React.useCallback(async () => {
-    if (!tkbTableRef.current) return;
     tracker.track('[tkb_table] btn_copy_image_clicked');
-    const canvas = await html2canvas(tkbTableRef.current);
-    canvas.toBlob((blob) => {
-      if (blob === null) {
-        enqueueSnackbar('Sao chép vào clipboard thất bại, vui lòng thử lại.', { variant: 'error' });
-        return;
+    setIsProcessingImage(true);
+
+    // ClipboardItem nhận Promise<Blob>, nhờ vậy yêu cầu ghi clipboard được tạo
+    // ngay trong thao tác click và không bị mất quyền user activation trong lúc
+    // html2canvas đang render ảnh.
+    const imageBlobPromise = createTkbImageBlob();
+
+    try {
+      if (!window.isSecureContext || !navigator.clipboard?.write || !window.ClipboardItem) {
+        throw new Error('Trình duyệt không hỗ trợ ghi ảnh vào clipboard.');
       }
-      navigator.clipboard.write([new window.ClipboardItem({ [blob.type]: blob })]);
+
+      await navigator.clipboard.write([new window.ClipboardItem({ 'image/png': imageBlobPromise })]);
       enqueueSnackbar('Sao chép vào clipboard thành công.', { variant: 'success' });
-    });
-  }, []);
+    } catch (error) {
+      console.error('Không thể sao chép ảnh thời khóa biểu:', error);
+
+      try {
+        downloadBlob(await imageBlobPromise);
+        enqueueSnackbar('Trình duyệt chặn clipboard nên ảnh đã được tải xuống.', { variant: 'warning' });
+      } catch (downloadError) {
+        console.error('Không thể tạo ảnh thời khóa biểu:', downloadError);
+        enqueueSnackbar('Không thể tạo ảnh thời khóa biểu. Vui lòng thử lại.', { variant: 'error' });
+      }
+    } finally {
+      setIsProcessingImage(false);
+    }
+  }, [createTkbImageBlob]);
 
   return {
     tkbTableRef,
+    isProcessingImage,
     saveTkbImageToComputer,
     copyTkbImageToClipboard,
   };

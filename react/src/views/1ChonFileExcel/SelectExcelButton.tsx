@@ -21,25 +21,38 @@ function SelectExcelButton() {
     (event) => {
       const file = event.target.files?.[0];
       if (!file) return;
+
+      const reportUploadFailure = (message = 'Không đúng định dạng file của trường') => {
+        enqueueSnackbar(message, { variant: 'error' });
+        tracker.track('[page1] upload_excel_resulted', { success: false, fileName: file.name });
+      };
+
       const reader = new FileReader();
-      const rABS = !!reader.readAsBinaryString;
       reader.onload = (e) => {
-        const bstr = e?.target?.result;
-        const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array' });
-        const wsLyThuyet = wb.Sheets[wb.SheetNames[0]];
-        const wsThucHanh = wb.Sheets[wb.SheetNames[1]];
-        const dataLyThuyet = XLSX.utils.sheet_to_json<any[][]>(wsLyThuyet, { header: 1 });
-        const dataThucHanh = XLSX.utils.sheet_to_json<any[][]>(wsThucHanh, { header: 1 });
-        const dataInArray = [...dataLyThuyet, ...dataThucHanh].filter(
-          (row) => typeof row[0] === 'number', // những row có cột 0 là STT (STT là number) thì mới là data ta cần
-        );
-        if (dataInArray.length) {
+        try {
+          const fileContent = e.target?.result;
+          if (!(fileContent instanceof ArrayBuffer)) throw new Error('Không đọc được nội dung file Excel.');
+
+          const workbook = XLSX.read(fileContent, { type: 'array' });
+          const theorySheet = workbook.Sheets[workbook.SheetNames[0]];
+          const practiceSheet = workbook.Sheets[workbook.SheetNames[1]];
+          const theoryRows = XLSX.utils.sheet_to_json<any[][]>(theorySheet, { header: 1 });
+          const practiceRows = XLSX.utils.sheet_to_json<any[][]>(practiceSheet, { header: 1 });
+          const rows = [...theoryRows, ...practiceRows].filter(
+            (row) => typeof row[0] === 'number', // Chỉ nhận các hàng có STT dạng số.
+          );
+
+          if (!rows.length) {
+            reportUploadFailure();
+            return;
+          }
+
           const now = new Date();
           setDataExcel({
-            data: dataInArray.map((array) => arrayToTkbObject(array)),
+            data: rows.map((array) => arrayToTkbObject(array)),
             fileName: file.name,
-            lastUpdateTimestamp: now.getTime(), // Epoch timestamp for precise comparison
-            lastUpdate: toDateTimeString(now), // Keep for backward compatibility
+            lastUpdateTimestamp: now.getTime(),
+            lastUpdate: toDateTimeString(now),
           });
           enqueueSnackbar(
             <>
@@ -61,15 +74,14 @@ function SelectExcelButton() {
             },
           );
           tracker.track('[page1] upload_excel_resulted', { success: true, fileName: file.name });
-        } else {
-          enqueueSnackbar('Không đúng định dạng file của trường', {
-            variant: 'error',
-          });
-          tracker.track('[page1] upload_excel_resulted', { success: false });
+        } catch (error) {
+          console.error('Không thể đọc file Excel:', error);
+          reportUploadFailure('Không thể đọc file Excel. Vui lòng kiểm tra lại file đã chọn.');
         }
       };
-      if (rABS) reader.readAsBinaryString(file);
-      else reader.readAsArrayBuffer(file);
+      reader.onerror = () => reportUploadFailure('Không thể đọc file Excel. Vui lòng thử lại.');
+      reader.readAsArrayBuffer(file);
+      event.target.value = '';
     },
     [setDataExcel],
   );

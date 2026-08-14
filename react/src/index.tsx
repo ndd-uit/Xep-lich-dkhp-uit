@@ -3,8 +3,6 @@ import { StyledEngineProvider, Theme, ThemeProvider, createTheme } from '@mui/ma
 import { SnackbarProvider } from 'notistack';
 import ReactDOM from 'react-dom';
 import { buildTracker } from './tracker';
-import { checkAdBlocker } from './tracking.utils';
-import { useDrawerStore, useUtilsStore } from './zus';
 
 import App from './views/App';
 
@@ -20,14 +18,9 @@ declare module '@mui/styles/defaultTheme' {
   interface DefaultTheme extends Theme {}
 }
 
-export const isProd = process.env.NODE_ENV === 'production';
+export const isProd = import.meta.env.PROD;
 
 export const tracker = buildTracker();
-checkAdBlocker().then((hasAdBlocker) => {
-  tracker.updateProperty('hasAdBlocker', hasAdBlocker);
-  tracker.updateProperty('leftDrawerInitiallyOpen', useDrawerStore.getState().isDrawerOpen);
-  useUtilsStore.setState({ hasAdBlocker });
-});
 
 const theme = createTheme({
   shape: {

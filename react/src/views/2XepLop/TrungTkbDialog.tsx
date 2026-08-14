@@ -72,7 +72,9 @@ function TrungTkbDialog() {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeDialog} color="primary" children="Đã hiểu" />
+        <Button onClick={closeDialog} color="primary">
+          Đã hiểu
+        </Button>
       </DialogActions>
     </Dialog>
   );

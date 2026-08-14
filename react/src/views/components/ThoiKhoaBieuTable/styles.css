@@ -21,6 +21,13 @@
   box-shadow: 0 12px 32px rgba(44, 78, 96, 0.08);
 }
 
+#thoi-khoa-bieu .redundant-classes-table {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin-bottom: 12px;
+}
+
 #thoi-khoa-bieu table thead tr th {
   width: 3%;
   background-color: #eaf3f7;
