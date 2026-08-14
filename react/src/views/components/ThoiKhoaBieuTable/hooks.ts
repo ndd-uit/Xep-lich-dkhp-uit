@@ -6,7 +6,7 @@ import { tracker } from '../../..';
 import { ClassModel } from '../../../types';
 import { findOverlapedClasses, getDanhSachTiet } from '../../../utils';
 import { selectPhanLoaiHocTrenTruong, useTkbStore } from '../../../zus';
-import { canvasToPngBlob, downloadBlob, getTietIndex } from './utils';
+import { canvasToPngBlob, downloadBlob, getSafeCanvasScale, getTietIndex } from './utils';
 
 /* // Uncomment to see how rowData can be conducted:
 const rowDataExample = [
@@ -107,16 +107,35 @@ export const useProcessImageTkb = () => {
   const [isProcessingImage, setIsProcessingImage] = React.useState(false);
 
   const createTkbImageBlob = React.useCallback(async (): Promise<Blob> => {
-    if (!tkbTableRef.current) throw new Error('Không tìm thấy thời khóa biểu để tạo ảnh.');
+    const table = tkbTableRef.current;
+    if (!table) throw new Error('Không tìm thấy thời khóa biểu để tạo ảnh.');
 
-    const canvas = await html2canvas(tkbTableRef.current, {
-      backgroundColor: '#ffffff',
-      logging: false,
-      scale: Math.min(window.devicePixelRatio || 1, 2),
-      useCORS: true,
-    });
+    const width = Math.ceil(table.getBoundingClientRect().width);
+    const height = Math.ceil(table.getBoundingClientRect().height);
+    if (!width || !height) throw new Error('Thời khóa biểu đang bị ẩn nên không thể tạo ảnh.');
 
-    return canvasToPngBlob(canvas);
+    const initialScale = getSafeCanvasScale(width, height, window.devicePixelRatio || 1);
+    const attemptedScales = [initialScale, initialScale * 0.75, initialScale * 0.5].filter(
+      (scale, index, scales) => scale >= 0.1 && scales.findIndex((value) => Math.abs(value - scale) < 0.01) === index,
+    );
+
+    let lastError: unknown;
+    for (const scale of attemptedScales) {
+      try {
+        const canvas = await html2canvas(table, {
+          backgroundColor: '#ffffff',
+          logging: false,
+          scale,
+          useCORS: true,
+        });
+
+        return await canvasToPngBlob(canvas);
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    throw lastError instanceof Error ? lastError : new Error('Không thể tạo ảnh thời khóa biểu.');
   }, []);
 
   const saveTkbImageToComputer = React.useCallback(async () => {
