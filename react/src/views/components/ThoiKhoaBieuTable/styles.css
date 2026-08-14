@@ -1,0 +1,114 @@
+#thoi-khoa-bieu {
+  position: relative;
+}
+
+#thoi-khoa-bieu th,
+#thoi-khoa-bieu td {
+  padding: 0.55em 0.4em;
+  border-right: 1px solid #d5e1e7;
+  border-bottom: 1px solid #d5e1e7;
+}
+
+#thoi-khoa-bieu table {
+  min-width: 1050px;
+  max-width: 1500px;
+  min-height: 75vh;
+  overflow: hidden;
+  border: 1px solid #d5e1e7;
+  border-spacing: 0;
+  border-radius: 14px;
+  background-color: #ffffff;
+  box-shadow: 0 12px 32px rgba(44, 78, 96, 0.08);
+}
+
+#thoi-khoa-bieu table thead tr th {
+  width: 3%;
+  background-color: #eaf3f7;
+  color: #17364a;
+  text-align: center;
+  font-weight: 700;
+}
+
+#thoi-khoa-bieu table tr td {
+  background: #edf2f5 !important;
+}
+
+#thoi-khoa-bieu table tr td.cell-tiet {
+  width: 10em;
+  color: #506675;
+  text-align: center;
+  font-weight: 600;
+}
+
+#thoi-khoa-bieu .cell-class {
+  position: relative;
+  width: 230px;
+  background-color: #ffffff !important;
+  text-align: center;
+}
+
+#thoi-khoa-bieu .cell-class .remove-class-btn {
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+#thoi-khoa-bieu .cell-class-hovering .remove-class-btn,
+#thoi-khoa-bieu .cell-class:focus-within .remove-class-btn {
+  opacity: 1;
+}
+
+#thoi-khoa-bieu .extra-buttons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #d5e1e7;
+  border-radius: 10px;
+  opacity: 0;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(44, 78, 96, 0.14);
+  transform: translateX(100%);
+  transition: opacity 140ms ease;
+}
+
+#thoi-khoa-bieu .extra-buttons.extra-buttons-shown {
+  opacity: 1;
+}
+
+#thoi-khoa-bieu.compact .extra-buttons {
+  display: none;
+}
+
+/* Tooltip của nút xóa môn cần nằm sát điểm neo. */
+.MuiTooltip-tooltipPlacementBottom {
+  margin-top: 0 !important;
+}
+
+#thoi-khoa-bieu.compact table {
+  min-width: 700px;
+  font-size: 0.875rem;
+}
+
+#thoi-khoa-bieu.compact table thead tr th {
+  width: 10ch;
+}
+
+@media screen and (max-width: 1100px) {
+  #thoi-khoa-bieu table {
+    min-width: 700px;
+    font-size: 0.875rem;
+  }
+
+  #thoi-khoa-bieu table thead tr th {
+    width: 10ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #thoi-khoa-bieu .cell-class .remove-class-btn,
+  #thoi-khoa-bieu .extra-buttons {
+    transition: none;
+  }
+}

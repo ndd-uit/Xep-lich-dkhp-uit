@@ -1,0 +1,127 @@
+.ag-theme-alpine {
+  --ag-font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ag-font-size: 13px;
+  --ag-foreground-color: #203344;
+  --ag-secondary-foreground-color: #617483;
+  --ag-background-color: #ffffff;
+  --ag-header-foreground-color: #17364a;
+  --ag-header-background-color: #eaf3f7;
+  --ag-odd-row-background-color: #f8fafb;
+  --ag-row-hover-color: #edf6f9;
+  --ag-selected-row-background-color: #dceef5;
+  --ag-border-color: #d3e0e6;
+  --ag-secondary-border-color: #e3ebef;
+  --ag-input-border-color: #b8ccd6;
+  --ag-input-focus-border-color: #006897;
+  --ag-alpine-active-color: #006897;
+  --ag-checkbox-checked-color: #006897;
+  --ag-range-selection-border-color: #006897;
+  --ag-range-selection-background-color: rgba(0, 104, 151, 0.1);
+  --ag-control-panel-background-color: #f7fafb;
+}
+
+.ag-theme-alpine .ag-root-wrapper {
+  overflow: hidden;
+  border: 1px solid #d3e0e6;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(44, 78, 96, 0.08);
+}
+
+/* Hiển thị biểu tượng ghim ở cột đã được pin. */
+.ag-pinned-left-header .ag-header-cell-text,
+.ag-pinned-right-header .ag-header-cell-text {
+  display: flex;
+  align-items: center;
+}
+
+.ag-pinned-left-header .ag-header-cell-text::before,
+.ag-pinned-right-header .ag-header-cell-text::before {
+  display: inline-block;
+  margin-right: 5px;
+  color: #006897;
+  font-family: var(--ag-icon-font-family);
+  font-size: var(--ag-icon-size);
+  line-height: var(--ag-icon-size);
+  font-style: normal;
+  font-weight: normal;
+  font-feature-settings: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  content: var(--ag-icon-font-code-pin, '\f124');
+}
+
+.ag-theme-alpine .ag-cell {
+  padding-right: 10px;
+  padding-left: 10px;
+  line-height: 28px;
+  letter-spacing: 0;
+}
+
+.ag-theme-alpine .ag-header-cell,
+.ag-theme-alpine .ag-header-group-cell {
+  padding-right: 12px;
+  padding-left: 12px;
+  border-right: 1px solid #d3e0e6;
+  font-weight: 700;
+}
+
+.ag-theme-alpine .ag-header-cell-resize::after {
+  background-color: #9db6c2;
+}
+
+.ag-theme-alpine .ag-cell-normal,
+.ag-theme-alpine .ag-group-title-bar {
+  background-color: inherit;
+}
+
+.ag-theme-alpine .ag-header-cell-filtered,
+.ag-filter-toolpanel-group.ag-has-filter {
+  background-color: #cfe6ef !important;
+  color: #004c70;
+}
+
+/* Chỉ hiển thị biểu tượng lọc khi cột đang có bộ lọc. */
+.ag-theme-alpine .ag-floating-filter-button {
+  width: 0;
+  height: 0;
+  margin: 0;
+  opacity: 0;
+}
+
+.ag-theme-alpine .ag-filter-list-panel .ag-has-filter .ag-group-title::after,
+.ag-theme-alpine .ag-header-cell-filtered .ag-icon-filter {
+  font-size: 18px;
+}
+
+.ag-theme-alpine .ag-sticky-top,
+.ag-theme-alpine .ag-dnd-ghost {
+  background-color: #edf6f9;
+}
+
+.ag-theme-alpine .ag-set-filter-list {
+  height: auto;
+  max-height: calc(100dvh - 200px) !important;
+  overflow: auto;
+}
+
+.ag-theme-alpine .ag-row-hover {
+  cursor: pointer;
+}
+
+.ag-theme-alpine .ag-status-name-value {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  font-weight: 600;
+}
+
+.ag-theme-alpine .ag-cell-focus:not(.ag-cell-range-selected) {
+  outline: 2px solid #1981aa;
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ag-theme-alpine * {
+    transition-duration: 0.01ms !important;
+  }
+}
