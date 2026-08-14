@@ -51,14 +51,23 @@ export const getDanhSachTiet = (tiet: ClassModel['Tiet']): string[] => {
  * 7-11, 7-12, 7-13: Thứ 7, tiết 11,12,13
  */
 type ValidTimeSlot = `${string}-${string}`;
-type TimeSlots = '*' | ValidTimeSlot[];
+type TimeSlots = ValidTimeSlot[];
+
+const UNKNOWN_SCHEDULE_VALUES = new Set(['', 'undefined', 'null', 'nan']);
+
+const isUnknownScheduleValue = (value: string): boolean => {
+  return UNKNOWN_SCHEDULE_VALUES.has(value.trim().toLowerCase());
+};
+
 const getTimeSlots = ({ Thu, Tiet }: ClassModel): TimeSlots => {
-  if (Thu === '*') return '*';
+  // Lớp online hoặc lớp thực hành chưa có lịch cố định không thể dùng để
+  // kết luận trùng thời khóa biểu. Excel cells trống hiện được đọc thành
+  // chuỗi "undefined", vì vậy cần xử lý cả các placeholder tương tự.
+  if (Thu === '*' || Tiet === '*' || isUnknownScheduleValue(Thu) || isUnknownScheduleValue(Tiet)) return [];
   return getDanhSachTiet(Tiet).map((tiet): ValidTimeSlot => `${Thu}-${tiet}`);
 };
 
 const isTimeSlotsOverlap = (timeSlotsA: TimeSlots, timeSlotsB: TimeSlots) => {
-  if (timeSlotsA === '*' || timeSlotsB === '*') return false;
   return timeSlotsA.some((slotA) => timeSlotsB.includes(slotA));
 };
 
