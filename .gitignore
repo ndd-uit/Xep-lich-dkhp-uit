@@ -2,6 +2,7 @@
 
 .idea
 /reactv2
+/docs/
 
 # dependencies
 /node_modules

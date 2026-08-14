@@ -1,25 +1,33 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="utf-8">
-    <title>Single Page Apps for GitHub Pages</title>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Đang chuyển hướng</title>
     <script>
-        // Single Page Apps for GitHub Pages
-        // https://github.com/rafrex/spa-github-pages
-        var segmentCount = 1;
-        var l = window.location;
-        l.replace(
-            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-            l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?p=/' +
-            l.pathname.slice(1).split('/').slice(segmentCount).join('/').replace(/&/g, '~and~') +
-            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-            l.hash
-        );
+      // Giữ đường dẫn React Router khi GitHub Pages trả về trang 404.
+      // Dự án được deploy dưới một segment là tên repository.
+      var segmentCount = 1;
+      var locationInfo = window.location;
+      var repositoryPath = locationInfo.pathname
+        .split('/')
+        .slice(0, 1 + segmentCount)
+        .join('/');
+      var routePath = locationInfo.pathname.slice(1).split('/').slice(segmentCount).join('/').replace(/&/g, '~and~');
+      var query = locationInfo.search ? '&q=' + locationInfo.search.slice(1).replace(/&/g, '~and~') : '';
+
+      locationInfo.replace(
+        locationInfo.protocol +
+          '//' +
+          locationInfo.hostname +
+          (locationInfo.port ? ':' + locationInfo.port : '') +
+          repositoryPath +
+          '/?p=/' +
+          routePath +
+          query +
+          locationInfo.hash,
+      );
     </script>
-</head>
-
-<body>
-</body>
-
+  </head>
+  <body></body>
 </html>

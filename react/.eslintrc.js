@@ -1,9 +1,10 @@
 module.exports = {
-  extends: ['eslint-config-react-app'],
+  root: true,
+  extends: ['react-app', 'react-app/jest'],
   plugins: ['import'],
   rules: {
     'import/order': [
-      'warn',
+      'error',
       {
         groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object'],
       },
