@@ -4,6 +4,7 @@ import {
   getSafeCanvasScale,
   isBrowserExtensionElement,
   sanitizeHtml2CanvasColors,
+  sanitizeHtml2CanvasDocument,
 } from './utils';
 
 describe('timetable image utilities', () => {
@@ -84,6 +85,27 @@ describe('timetable image utilities', () => {
     expect(cell.style.color).toBe('rgb(22, 39, 56)');
     expect(cell.style.getPropertyPriority('color')).toBe('important');
     getComputedStyle.mockRestore();
+  });
+
+  test('also replaces unsupported document background colors', () => {
+    const table = document.createElement('table');
+    document.body.appendChild(table);
+
+    const getComputedStyle = vi.spyOn(window, 'getComputedStyle').mockImplementation(
+      (element) =>
+        ({
+          getPropertyValue: (property: string) =>
+            element === document.documentElement && property === 'background-color' ? 'oklch(50% 0.2 20)' : '',
+        } as CSSStyleDeclaration),
+    );
+
+    sanitizeHtml2CanvasDocument(document, table);
+
+    expect(document.documentElement.style.backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    expect(document.documentElement.style.getPropertyPriority('background-color')).toBe('important');
+    getComputedStyle.mockRestore();
+    table.remove();
+    document.documentElement.style.removeProperty('background-color');
   });
 
   test('recognizes DOM resources injected by browser extensions', () => {

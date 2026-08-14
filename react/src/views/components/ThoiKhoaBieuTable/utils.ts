@@ -64,6 +64,17 @@ type StylableElement = Element & { style: CSSStyleDeclaration };
 
 const isStylableElement = (element: Element): element is StylableElement => 'style' in element;
 
+const sanitizeElementColors = (element: Element, view: Window): void => {
+  if (!isStylableElement(element)) return;
+
+  const computedStyle = view.getComputedStyle(element);
+  for (const [property, fallback] of Object.entries(HTML2CANVAS_COLOR_FALLBACKS)) {
+    if (UNSUPPORTED_COLOR_FUNCTION.test(computedStyle.getPropertyValue(property))) {
+      element.style.setProperty(property, fallback, 'important');
+    }
+  }
+};
+
 /**
  * html2canvas 1.4 cannot parse CSS Color Level 4 functions. Browser
  * extensions can inject these colors even when the application does not use
@@ -74,16 +85,17 @@ export const sanitizeHtml2CanvasColors = (root: HTMLElement): void => {
   if (!view) return;
 
   const elements = [root, ...Array.from(root.querySelectorAll('*'))];
-  for (const element of elements) {
-    if (!isStylableElement(element)) continue;
+  for (const element of elements) sanitizeElementColors(element, view);
+};
 
-    const computedStyle = view.getComputedStyle(element);
-    for (const [property, fallback] of Object.entries(HTML2CANVAS_COLOR_FALLBACKS)) {
-      if (UNSUPPORTED_COLOR_FUNCTION.test(computedStyle.getPropertyValue(property))) {
-        element.style.setProperty(property, fallback, 'important');
-      }
-    }
-  }
+/** html2canvas parses the document background before parsing the target tree. */
+export const sanitizeHtml2CanvasDocument = (documentClone: Document, root: HTMLElement): void => {
+  const view = documentClone.defaultView;
+  if (!view) return;
+
+  sanitizeElementColors(documentClone.documentElement, view);
+  sanitizeElementColors(documentClone.body, view);
+  sanitizeHtml2CanvasColors(root);
 };
 
 export const isBrowserExtensionElement = (element: Element): boolean => {

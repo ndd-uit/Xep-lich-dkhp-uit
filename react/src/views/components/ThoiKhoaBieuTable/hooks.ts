@@ -12,7 +12,7 @@ import {
   getSafeCanvasScale,
   getTietIndex,
   isBrowserExtensionElement,
-  sanitizeHtml2CanvasColors,
+  sanitizeHtml2CanvasDocument,
 } from './utils';
 
 /* // Uncomment to see how rowData can be conducted:
@@ -133,7 +133,7 @@ export const useProcessImageTkb = () => {
           backgroundColor: '#ffffff',
           ignoreElements: isBrowserExtensionElement,
           logging: false,
-          onclone: (_document, clonedTable) => sanitizeHtml2CanvasColors(clonedTable),
+          onclone: (documentClone, clonedTable) => sanitizeHtml2CanvasDocument(documentClone, clonedTable),
           scale,
           useCORS: true,
         });
