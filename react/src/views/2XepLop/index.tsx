@@ -1,7 +1,7 @@
 import AgGrid from './AgGrid';
 import TrungTkbDialog, { TrungTkbDialogContext } from './TrungTkbDialog';
 
-function Index(props) {
+function Index() {
   return (
     <div style={{ minWidth: '100%' }}>
       <TrungTkbDialogContext>

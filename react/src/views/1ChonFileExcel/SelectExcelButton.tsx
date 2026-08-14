@@ -1,14 +1,16 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { closeSnackbar, enqueueSnackbar } from 'notistack';
 import React, { ChangeEventHandler } from 'react';
+import type { ReactNode } from 'react';
 import XLSX from 'xlsx';
 import { selectDataExcel, useTkbStore } from '../../zus';
 import { tracker } from '../..';
 import { arrayToTkbObject, getLastUpdateString, sheetJSFT, toDateTimeString } from './utils';
 
-const Bold = ({ children }) => <b style={{ marginLeft: 5 }}>{children}</b>;
+const Bold = ({ children }: { children: ReactNode }) => <b style={{ marginLeft: 5 }}>{children}</b>;
 
 function SelectExcelButton() {
   const dataExcel = useTkbStore(selectDataExcel);
@@ -73,14 +75,23 @@ function SelectExcelButton() {
   );
 
   return (
-    <Box mt={1} mb={2}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: { xs: 'stretch', sm: 'center' },
+        flexDirection: { xs: 'column', sm: 'row' },
+        gap: 2,
+      }}
+    >
       {/* File uploader with material-ui: https://stackoverflow.com/a/54043619/9787887*/}
       <Tooltip title={dataExcel?.fileName || 'Chưa upload file'}>
         <Button
           variant={'contained'}
           color={lastUpdateString ? 'success' : 'primary'}
           component="label"
-          style={lastUpdateString ? undefined : { fontWeight: 'bold' }}
+          startIcon={<UploadFileIcon />}
+          size="large"
+          sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
         >
           {lastUpdateString ? (
             <>
@@ -100,8 +111,16 @@ function SelectExcelButton() {
           />
         </Button>
       </Tooltip>
-      <span style={{ marginLeft: '10px' }}>
-        Ví dụ file excel của{' '}
+      <Box
+        component="span"
+        sx={{
+          color: 'text.secondary',
+          fontSize: '0.8125rem',
+          lineHeight: 1.7,
+          '& a': { fontWeight: 600 },
+        }}
+      >
+        Cần file mẫu?{' '}
         <a
           target="_blank"
           rel="noreferrer"
@@ -123,7 +142,7 @@ function SelectExcelButton() {
         >
           TKB_dự kiến_HK2 2023-2024_29-12-2023_Copied.xlsx
         </a>{' '}
-      </span>
+      </Box>
     </Box>
   );
 }

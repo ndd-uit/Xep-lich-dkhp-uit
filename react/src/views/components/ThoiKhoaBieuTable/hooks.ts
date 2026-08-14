@@ -68,12 +68,25 @@ const usePhanLoaiHocTrenTruong = () => {
 
     for (const lop of kept) {
       const listTiet = getDanhSachTiet(lop.Tiet);
+      const listTietIndex = listTiet.map(getTietIndex);
+      const dayKey = `Thu${lop.Thu}` as keyof RowData;
 
-      const tietBatDau = listTiet[0];
-      tableData[getTietIndex(tietBatDau)]['Thu' + lop.Thu] = lop;
+      // A malformed Excel row (for example, a missing "Thứ" or "Tiết") must not
+      // prevent the entire timetable from rendering.
+      if (
+        !Object.prototype.hasOwnProperty.call(tableData[0], dayKey) ||
+        !listTietIndex.length ||
+        listTietIndex.some(
+          (tietIndex) => !Number.isInteger(tietIndex) || tietIndex < 0 || tietIndex >= tableData.length,
+        )
+      ) {
+        continue;
+      }
 
-      for (let i = 1; i < listTiet.length; i++) {
-        tableData[getTietIndex(listTiet[i])]['Thu' + lop.Thu] = CELL.OCCUPIED;
+      tableData[listTietIndex[0]][dayKey] = lop;
+
+      for (let i = 1; i < listTietIndex.length; i++) {
+        tableData[listTietIndex[i]][dayKey] = CELL.OCCUPIED;
       }
     }
 

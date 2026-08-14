@@ -10,8 +10,6 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 interface ErrorBoundaryProps {
   fallback?: React.ReactNode;
@@ -78,32 +76,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
           >
             <AlertTitle>Đã xảy ra lỗi</AlertTitle>
             <Typography variant="body2" sx={{ mb: 2 }}>
-              Vui lòng báo lỗi để được khắc phục.
+              Vui lòng tải lại trang và thử lại thao tác của bạn.
             </Typography>
-            <Stack spacing={1.5} sx={{ mb: 2 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                href="https://www.facebook.com/messages/t/loia5tqd001"
-                target="_blank"
-                rel="noopener noreferrer"
-                startIcon={<FacebookIcon />}
-                fullWidth
-              >
-                Báo lỗi qua Facebook
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                href="https://www.linkedin.com/in/loia5tqd001/"
-                target="_blank"
-                rel="noopener noreferrer"
-                startIcon={<LinkedInIcon />}
-                fullWidth
-              >
-                Báo lỗi qua LinkedIn
-              </Button>
-            </Stack>
             <Typography variant="caption" display="block" sx={{ opacity: 0.7, mb: this.state.error ? 1.5 : 0 }}>
               Hoặc bạn có thể thử{' '}
               <Button size="small" onClick={this.handleReload} sx={{ textTransform: 'none' }}>

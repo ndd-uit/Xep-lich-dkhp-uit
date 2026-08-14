@@ -1,6 +1,6 @@
+import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 import { tracker } from '../..';
-import { COLORS } from '../../constants';
 import { getTongSoTcJudgement } from '../../utils';
 import { selectTongSoTcSelected, useTkbStore } from '../../zus';
 
@@ -11,18 +11,28 @@ function SoTinChi(props: { tongSoTcSelected?: number }) {
 
   return (
     <Tooltip title={judgement.text}>
-      <p
-        style={{ color: judgement.isOk ? COLORS.SUCCESS : COLORS.ERROR, margin: 0, padding: 6 }}
+      <Chip
+        color={judgement.isOk ? 'success' : 'error'}
+        variant="outlined"
+        label={
+          <>
+            Số tín chỉ: <b>{tongSoTcSelected}</b>
+          </>
+        }
+        sx={{
+          height: 34,
+          borderRadius: 2,
+          bgcolor: judgement.isOk ? 'success.light' : 'error.light',
+          fontWeight: 500,
+          '& .MuiChip-label': { px: 1.5 },
+        }}
         onMouseEnter={() => {
           tracker.track('[so_tc] label_hovered', {
             tongSoTc: tongSoTcSelected,
             ...judgement,
           });
         }}
-      >
-        {/* TODO: disregard các lớp bị trùng TKB */}
-        Số tín chỉ: <b>{tongSoTcSelected}</b>
-      </p>
+      />
     </Tooltip>
   );
 }

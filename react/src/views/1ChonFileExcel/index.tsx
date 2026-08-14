@@ -1,6 +1,4 @@
-import { Alert, AlertProps } from '@mui/material';
-import StarOutlineIcon from '@mui/icons-material/StarOutline';
-import { tracker } from '../..';
+import { Alert, AlertProps, Box, Paper, Typography } from '@mui/material';
 import { selectDataExcel, useTkbStore } from '../../zus';
 import SelectExcelButton from './SelectExcelButton';
 import { getLastUpdateString } from './utils';
@@ -13,8 +11,8 @@ function MyAlert({ children, color, ...otherProps }: AlertProps) {
     <Alert
       severity="info"
       color={finalColor}
-      style={{ fontWeight: 'bold', padding: '5px 10px', marginBottom: 12 }}
       variant="outlined"
+      sx={{ alignItems: 'center', fontWeight: 600, py: 0.25, '& a': { fontWeight: 800 } }}
       {...otherProps}
     >
       {children}
@@ -24,63 +22,36 @@ function MyAlert({ children, color, ...otherProps }: AlertProps) {
 
 function Index() {
   return (
-    <div style={{ maxWidth: 1500 }}>
-      <SelectExcelButton />
-      <MyAlert className="animated flash">
-        Hướng dẫn sử dụng:{' '}
-        <a
-          href="https://github.com/loia5tqd001/Dang-Ky-Hoc-Phan-UIT?tab=readme-ov-file#c%C3%A1c-update-%E1%BB%9F-phi%C3%AAn-b%E1%BA%A3n-2024"
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => {
-            tracker.track('[page1] link_usage_guide_clicked');
-          }}
-        >
-          Xem ngay
-        </a>
-      </MyAlert>
-      <MyAlert>
-        Câu hỏi thường gặp:{' '}
-        <a
-          href="https://github.com/loia5tqd001/Dang-Ky-Hoc-Phan-UIT/issues/21"
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => {
-            tracker.track('[page1] link_faq_clicked');
-          }}
-        >
-          Xem ngay
-        </a>
-      </MyAlert>
-      <MyAlert>
-        Video cách dùng script đăng ký nhanh:{' '}
-        <a
-          href="https://www.youtube.com/watch?v=DsLUHgX_xzs"
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => {
-            tracker.track('[page1] link_script_instruction_video_clicked');
-          }}
-        >
-          Xem ngay
-        </a>
-      </MyAlert>
-      <MyAlert>
-        Cảm thấy phần mềm hữu ích?{' '}
-        <a
-          href="https://github.com/loia5tqd001/Dang-Ky-Hoc-Phan-UIT"
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => {
-            tracker.track('[page1] link_tha_star_ngay_clicked');
-          }}
-          style={{ display: 'inline-flex', alignItems: 'center' }}
-        >
-          Thả <StarOutlineIcon style={{ fontSize: 16 }} />
-          star
-        </a>
-      </MyAlert>
-    </div>
+    <Box sx={{ width: '100%', maxWidth: 920, py: { xs: 1, sm: 3.5 } }}>
+      <Box component="header" sx={{ mb: { xs: 2.5, sm: 4 } }}>
+        <Typography variant="subtitle2" color="primary" sx={{ fontWeight: 800, mb: 0.75 }}>
+          Bước 1
+        </Typography>
+        <Typography component="h1" variant="h4" sx={{ mb: 1 }}>
+          Chuẩn bị thời khóa biểu
+        </Typography>
+        <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
+          Tải file Excel từ cổng đào tạo để bắt đầu chọn lớp và sắp xếp thời khóa biểu.
+        </Typography>
+      </Box>
+
+      <Paper component="section" variant="outlined" sx={{ p: { xs: 2.25, sm: 3.5 }, mb: 3 }}>
+        <Typography component="h2" variant="h6" sx={{ mb: 0.75 }}>
+          Chọn file Excel
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2.25 }}>
+          Dùng file thời khóa biểu dự kiến gồm cả lý thuyết và thực hành.
+        </Typography>
+        <SelectExcelButton />
+      </Paper>
+
+      <Box component="section" aria-labelledby="notice-title">
+        <Typography id="notice-title" component="h2" variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+          Lưu ý
+        </Typography>
+        <MyAlert>Chỉ tải file Excel thời khóa biểu từ cổng đào tạo UIT để dữ liệu được đọc chính xác.</MyAlert>
+      </Box>
+    </Box>
   );
 }
 

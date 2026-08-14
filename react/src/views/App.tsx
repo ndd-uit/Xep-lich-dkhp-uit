@@ -80,7 +80,8 @@ function App() {
 export default App;
 
 // styles below:
-const drawerWidth = 190;
+const drawerWidth = 224;
+const drawerWidthClosed = 56;
 
 type StyleProps = {
   isDrawerOpen: boolean;
@@ -94,16 +95,20 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: (props) => theme.spacing(props.isDrawerOpen ? 3 : 1),
-    background: '#f4f9f2ee',
-    minHeight: '100vh',
+    padding: (props) => theme.spacing(props.isDrawerOpen ? 4 : 2.5),
+    background: theme.palette.background.default,
+    minHeight: '100dvh',
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'flex-start',
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: -(drawerWidth - 50),
+    marginLeft: -(drawerWidth - drawerWidthClosed),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(2, 1.5),
+    },
   },
   contentShift: {
     transition: theme.transitions.create('margin', {

@@ -21,14 +21,14 @@ export const timeLookup = [
   /* tiet 14 */ tietOnline.label,
 ];
 
-export const getTietIndex = (tietString) => {
+export const getTietIndex = (tietString: string): number => {
   if (tietString === tietOnline.stringValue) return tietOnline.index; // Thứ 3 Tiết * -> Thứ 3 Học Online
   if (tietString === '0') return 9;
-  return tietString - 1;
+  return Number(tietString) - 1;
 };
 
 // Plagiarize from: https://github.com/gillyb/reimg/blob/master/reimg.js
-export const downloadFromCanvas = (canvasElement, filename = 'thoikhoabieu.png') => {
+export const downloadFromCanvas = (canvasElement: HTMLCanvasElement, filename = 'thoikhoabieu.png') => {
   const a = document.createElement('a');
   a.href = canvasElement.toDataURL();
   a.download = filename;

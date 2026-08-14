@@ -20,7 +20,7 @@ import {
 import './styles.css';
 import { timeLookup, tietOnline } from './utils';
 
-const GetCell = ({ data }) => {
+const GetCell = ({ data }: { data: RowData[keyof RowData] }) => {
   if (data === CELL.NO_CLASS) return <td />;
   if (data === CELL.OCCUPIED) return null;
   return <ClassCell data={data} rowSpan={getDanhSachTiet(data.Tiet).length} />;
@@ -38,8 +38,8 @@ function RowHocTrenTruong({ row, index }: { row: RowData; index: number }) {
         Tiết {index === tietOnline.index ? tietOnline.stringValue : index + 1} <br />
         {timeLookup[index]}
       </td>
-      {[2, 3, 4, 5, 6, 7].map((t) => (
-        <GetCell key={t} data={row['Thu' + t]} />
+      {(['Thu2', 'Thu3', 'Thu4', 'Thu5', 'Thu6', 'Thu7'] as const).map((dayKey) => (
+        <GetCell key={dayKey} data={row[dayKey]} />
       ))}
     </tr>
   );

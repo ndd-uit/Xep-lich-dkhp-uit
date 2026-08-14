@@ -14,7 +14,7 @@ export const ROUTES = {
   },
   _3KetQua: {
     path: '/3',
-    name: '3. TKB và script',
+    name: '3. Thời khóa biểu',
   },
   // _4GiaoDienDKHP: {
   //   path: '/4',

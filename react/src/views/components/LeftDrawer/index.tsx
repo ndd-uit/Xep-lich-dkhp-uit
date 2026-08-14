@@ -1,6 +1,6 @@
-import FeedbackIcon from '@mui/icons-material/FeedbackOutlined';
 import MenuIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import { IconButton } from '@mui/material';
+import type { Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { default as MuiDrawer } from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -11,18 +11,16 @@ import { styled } from '@mui/styles';
 import makeStyles from '@mui/styles/makeStyles';
 import logoUit from 'assets/img/logo-uit.png';
 import clsx from 'clsx';
-import GitHubButton from 'react-github-btn';
 import { NavLink, useHistory, useLocation } from 'react-router-dom';
-import Typewriter from 'typewriter-effect';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { tracker } from '../../..';
 import { ROUTES } from '../../../constants';
 import { useDrawerStore } from '../../../zus';
 
-const drawerWidth = 190;
-const drawerWidthClosed = 50;
+const drawerWidth = 224;
+const drawerWidthClosed = 56;
 
-const openCloseMixin = (theme) =>
+const openCloseMixin = (theme: Theme) =>
   ({
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -38,7 +36,9 @@ const Drawer = styled(MuiDrawer)(({ theme, open }) => ({
   boxSizing: 'border-box',
   ...openCloseMixin(theme),
   '& .MuiDrawer-paper': {
-    background: '#f2f1e3f0',
+    background: '#ffffff',
+    borderRight: `1px solid ${theme.palette.divider}`,
+    boxShadow: '6px 0 28px rgba(44, 78, 96, 0.06)',
     ...openCloseMixin(theme),
     width: open ? drawerWidth : drawerWidthClosed,
   },
@@ -69,27 +69,18 @@ function LeftDrawer() {
         </Box>
 
         {/* Logo */}
-        <Box mx={5} my={5} style={{ height: 120, marginTop: 60 }}>
+        <Box className={classes.brand}>
           <Tooltip title="Tool đăng ký học phần UIT">
-            <a
-              href="https://github.com/loia5tqd001/Dang-Ky-Hoc-Phan-UIT"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                tracker.track('[drawer] logo_clicked');
-              }}
-            >
-              <img
-                src={logoUit}
-                alt="logo uit"
-                className={clsx(classes.img, 'drop-shadow-blue', isCollapsed && classes.imgCollapsed)}
-              />
-            </a>
+            <img
+              src={logoUit}
+              alt="Đại học Công nghệ Thông tin"
+              className={clsx(classes.img, 'drop-shadow-blue', isCollapsed && classes.imgCollapsed)}
+            />
           </Tooltip>
         </Box>
 
         {/* List item */}
-        <List>
+        <List className={classes.menuList}>
           {Object.values(ROUTES).map((route, index) => (
             <ListItem
               key={route.path}
@@ -106,54 +97,6 @@ function LeftDrawer() {
             </ListItem>
           ))}
         </List>
-
-        {/* Icons with link */}
-        <Tooltip title="Gửi feedback" placement="top">
-          <Box m={1} style={{ margin: 'auto auto 0' }}>
-            <a
-              href="https://www.facebook.com/messages/t/loia5tqd001"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                tracker.track('[drawer] btn_feedback_clicked');
-              }}
-            >
-              <FeedbackIcon color="primary" fontSize="large" />
-            </a>
-          </Box>
-        </Tooltip>
-
-        {/* Typewriter */}
-        <Box className={clsx(classes.typewriterWrapper, classes.etc, isCollapsed && classes.etcCollapsed)}>
-          <Typewriter
-            options={{
-              strings: ['Give feedback', 'Like & Share', 'Star'],
-              autoStart: true,
-              loop: true,
-            }}
-          />
-        </Box>
-
-        {/* Github stars */}
-        <Tooltip title="Hãy vào star giúp nhé">
-          <Box className={clsx(classes.githubStarWrapper, classes.etc, isCollapsed && classes.etcCollapsed)}>
-            <div
-              onClick={() => {
-                tracker.track('[drawer] btn_star_github_clicked');
-              }}
-              onMouseEnter={() => {
-                tracker.track('[drawer] btn_star_github_hovered');
-              }}
-            >
-              <GitHubButton
-                href="https://github.com/loia5tqd001/Dang-Ky-Hoc-Phan-UIT"
-                data-size="large"
-                data-show-count="true"
-                children={'Star'}
-              />
-            </div>
-          </Box>
-        </Tooltip>
       </Drawer>
     </nav>
   );
@@ -166,67 +109,77 @@ export default LeftDrawer;
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
-    transition: 'all 0.3s ease',
+    transition: 'width 0.24s ease',
   },
   collapseIcon: {
     margin: '0 auto 0',
     transform: 'rotate(0deg)',
-    transition: 'all 0.3s ease',
+    transition: 'transform 0.24s ease',
   },
   collapseIconCollapsed: {
-    transform: 'rotate(540deg)',
+    transform: 'rotate(180deg)',
+  },
+  brand: {
+    height: 112,
+    margin: theme.spacing(2, 3, 1),
+    display: 'grid',
+    placeItems: 'center',
   },
   img: {
     width: '100%',
+    maxWidth: 148,
     transformOrigin: 'center',
     transform: 'scale(1)',
-    transition: 'all 0.3s ease',
+    transition: 'transform 0.24s ease, filter 0.2s ease',
   },
   imgCollapsed: {
     transform: 'scale(0)',
   },
-  etc: {
-    transform: 'scale(1)',
-  },
-  etcCollapsed: {
-    transform: 'scale(0) translateY(100px)',
-    overflow: 'hidden',
-  },
   drawerTopCollapse: {
-    background: '#f7dce733',
+    minHeight: 56,
+    background: '#f7fafb',
     color: theme.palette.primary.main,
-    fontWeight: 'bolder',
-    borderBottom: '1px solid #ccc',
+    borderBottom: `1px solid ${theme.palette.divider}`,
     display: 'grid',
     placeItems: 'center',
   },
+  menuList: {
+    paddingTop: theme.spacing(1),
+  },
   listItem: {
-    borderTop: '1px solid transparent',
-    borderBottom: '1px solid transparent',
+    borderLeft: '3px solid transparent',
+    borderRadius: 10,
     userSelect: 'none',
     userDrag: 'none',
-    marginTop: 10,
+    margin: '6px 10px',
+    paddingTop: 10,
+    paddingBottom: 10,
+    width: 'auto',
+    color: theme.palette.text.secondary,
+    transition: 'background-color 160ms ease, color 160ms ease, transform 120ms ease',
+    '&:hover': {
+      backgroundColor: '#f0f6f8',
+      color: theme.palette.text.primary,
+    },
+    '&:active': {
+      transform: 'translateY(1px)',
+    },
+    '& .MuiListItemText-primary': {
+      fontSize: '0.875rem',
+      fontWeight: 600,
+      letterSpacing: '-0.01em',
+    },
   },
   menuItemActive: {
-    background: '#f7dce733',
+    background: '#e3f1f6',
     color: theme.palette.primary.main,
-    fontWeight: 'bolder',
-    borderTop: '1px solid #ccc',
-    borderBottom: '1px solid #ccc',
-  },
-  githubStarWrapper: {
-    minHeight: 45,
-    margin: 5,
-    paddingTop: 5,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    border: '3px dotted #0477BD',
-    borderRadius: 3,
-  },
-  typewriterWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderLeftColor: theme.palette.primary.main,
+    '&:hover': {
+      backgroundColor: '#dcecf2',
+      color: theme.palette.primary.dark,
+    },
+    '& .MuiListItemText-primary': {
+      fontWeight: 800,
+    },
   },
 }));

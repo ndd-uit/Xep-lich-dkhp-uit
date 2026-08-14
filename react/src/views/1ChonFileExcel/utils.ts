@@ -2,10 +2,9 @@ import { ClassModelOriginal } from 'types';
 
 export function arrayToTkbObject(array: any[]): ClassModelOriginal {
   // convert excel based date (1989-Dec-30) to Js based date (1970-Jan-01)
-  function convertExcelDateToStringDate(excelDate) {
+  function convertExcelDateToStringDate(excelDate: number) {
     // in Excel, based date is 1989-Dec-30: https://stackoverflow.com/questions/36378476/why-does-the-date-returns-31-12-1899-when-1-is-passed-to-it
-    // @ts-ignore
-    const offsetOfBases = new Date(0) - new Date(1899, 11, 31);
+    const offsetOfBases = new Date(0).getTime() - new Date(1899, 11, 31).getTime();
     const jsDate = new Date(excelDate * 24 * 60 * 60 * 1000 - offsetOfBases);
     return (
       jsDate.getFullYear() +
@@ -64,7 +63,9 @@ export function formatTimestampToString(timestamp: number): string {
 }
 
 // Get formatted lastUpdate string from dataExcel (backward compatible)
-export function getLastUpdateString(dataExcel: { lastUpdate?: string; lastUpdateTimestamp?: number } | null): string | undefined {
+export function getLastUpdateString(
+  dataExcel: { lastUpdate?: string; lastUpdateTimestamp?: number } | null,
+): string | undefined {
   if (!dataExcel) return undefined;
   if (dataExcel.lastUpdateTimestamp !== undefined) {
     return formatTimestampToString(dataExcel.lastUpdateTimestamp);
