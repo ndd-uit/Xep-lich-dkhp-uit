@@ -39,6 +39,7 @@ function AgGrid() {
     >
       <AgGridReact<ClassModel>
         ref={agGridRef}
+        reactiveCustomComponents={true}
         rowData={rowData}
         isRowSelectable={isRowSelectable}
         defaultColDef={defaultColDef}

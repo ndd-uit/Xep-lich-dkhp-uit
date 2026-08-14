@@ -1,4 +1,4 @@
-import { ColumnApi, GridApi } from 'ag-grid-community';
+import { ColumnState, GridApi } from 'ag-grid-community';
 import { partition } from 'lodash';
 import { memoize } from 'proxy-memoize';
 import { Mutate, StoreApi, create } from 'zustand';
@@ -39,7 +39,7 @@ type TkbStore = {
   } | null;
 
   selectedClasses: ClassModel[];
-  agGridColumnState: ReturnType<ColumnApi['getColumnState']> | null;
+  agGridColumnState: ColumnState[] | null;
   agGridFilterModel: ReturnType<GridApi['getFilterModel']> | null;
 
   // in case Buoc 3 chi ve TKB chu khong dung Buoc 2 Xep Lop

@@ -42,6 +42,61 @@ export const getSafeCanvasScale = (width: number, height: number, devicePixelRat
   return Math.max(0.1, Math.min(desiredScale, edgeScale, areaScale));
 };
 
+const UNSUPPORTED_COLOR_FUNCTION = /\b(?:oklch|oklab|lab|lch|color|color-mix|light-dark)\s*\(/i;
+const HTML2CANVAS_COLOR_FALLBACKS = {
+  color: 'rgb(22, 39, 56)',
+  'background-color': 'rgba(0, 0, 0, 0)',
+  'border-top-color': 'rgb(213, 225, 231)',
+  'border-right-color': 'rgb(213, 225, 231)',
+  'border-bottom-color': 'rgb(213, 225, 231)',
+  'border-left-color': 'rgb(213, 225, 231)',
+  'outline-color': 'rgba(0, 0, 0, 0)',
+  'text-decoration-color': 'currentcolor',
+  fill: 'currentcolor',
+  stroke: 'currentcolor',
+  'background-image': 'none',
+  'border-image-source': 'none',
+  'box-shadow': 'none',
+  'text-shadow': 'none',
+} as const;
+
+type StylableElement = Element & { style: CSSStyleDeclaration };
+
+const isStylableElement = (element: Element): element is StylableElement => 'style' in element;
+
+/**
+ * html2canvas 1.4 cannot parse CSS Color Level 4 functions. Browser
+ * extensions can inject these colors even when the application does not use
+ * them, so only sanitize the detached document created for image export.
+ */
+export const sanitizeHtml2CanvasColors = (root: HTMLElement): void => {
+  const view = root.ownerDocument.defaultView;
+  if (!view) return;
+
+  const elements = [root, ...Array.from(root.querySelectorAll('*'))];
+  for (const element of elements) {
+    if (!isStylableElement(element)) continue;
+
+    const computedStyle = view.getComputedStyle(element);
+    for (const [property, fallback] of Object.entries(HTML2CANVAS_COLOR_FALLBACKS)) {
+      if (UNSUPPORTED_COLOR_FUNCTION.test(computedStyle.getPropertyValue(property))) {
+        element.style.setProperty(property, fallback, 'important');
+      }
+    }
+  }
+};
+
+export const isBrowserExtensionElement = (element: Element): boolean => {
+  const marker = `${element.tagName} ${element.id} ${element.className}`.toLowerCase();
+  const resourceUrl = element.getAttribute('src') || element.getAttribute('href') || '';
+
+  return (
+    marker.includes('grammarly') ||
+    resourceUrl.startsWith('chrome-extension://') ||
+    resourceUrl.startsWith('moz-extension://')
+  );
+};
+
 const pngDataUrlToBlob = (dataUrl: string): Blob => {
   const prefix = 'data:image/png;base64,';
   if (!dataUrl.startsWith(prefix)) throw new Error('Không thể đọc dữ liệu ảnh PNG.');

@@ -1,4 +1,10 @@
-import { canvasToPngBlob, downloadBlob, getSafeCanvasScale } from './utils';
+import {
+  canvasToPngBlob,
+  downloadBlob,
+  getSafeCanvasScale,
+  isBrowserExtensionElement,
+  sanitizeHtml2CanvasColors,
+} from './utils';
 
 describe('timetable image utilities', () => {
   test('creates a PNG blob from a canvas', async () => {
@@ -59,5 +65,34 @@ describe('timetable image utilities', () => {
     expect(scale).toBeLessThan(1);
     expect(1200 * scale * 20_000 * scale).toBeLessThanOrEqual(16_000_000);
     expect(20_000 * scale).toBeLessThanOrEqual(8192);
+  });
+
+  test('replaces unsupported colors in the cloned timetable only', () => {
+    const table = document.createElement('table');
+    const cell = document.createElement('td');
+    table.appendChild(cell);
+
+    const getComputedStyle = vi.spyOn(window, 'getComputedStyle').mockImplementation(
+      (element) =>
+        ({
+          getPropertyValue: (property: string) => (element === cell && property === 'color' ? 'oklch(50% 0.2 20)' : ''),
+        } as CSSStyleDeclaration),
+    );
+
+    sanitizeHtml2CanvasColors(table);
+
+    expect(cell.style.color).toBe('rgb(22, 39, 56)');
+    expect(cell.style.getPropertyPriority('color')).toBe('important');
+    getComputedStyle.mockRestore();
+  });
+
+  test('recognizes DOM resources injected by browser extensions', () => {
+    const grammarlyElement = document.createElement('grammarly-extension');
+    const extensionStyle = document.createElement('link');
+    extensionStyle.href = 'chrome-extension://example/styles.css';
+
+    expect(isBrowserExtensionElement(grammarlyElement)).toBe(true);
+    expect(isBrowserExtensionElement(extensionStyle)).toBe(true);
+    expect(isBrowserExtensionElement(document.createElement('td'))).toBe(false);
   });
 });

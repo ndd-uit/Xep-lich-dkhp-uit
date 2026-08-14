@@ -6,7 +6,14 @@ import { tracker } from '../../..';
 import { ClassModel } from '../../../types';
 import { findOverlapedClasses, getDanhSachTiet } from '../../../utils';
 import { selectPhanLoaiHocTrenTruong, useTkbStore } from '../../../zus';
-import { canvasToPngBlob, downloadBlob, getSafeCanvasScale, getTietIndex } from './utils';
+import {
+  canvasToPngBlob,
+  downloadBlob,
+  getSafeCanvasScale,
+  getTietIndex,
+  isBrowserExtensionElement,
+  sanitizeHtml2CanvasColors,
+} from './utils';
 
 /* // Uncomment to see how rowData can be conducted:
 const rowDataExample = [
@@ -124,7 +131,9 @@ export const useProcessImageTkb = () => {
       try {
         const canvas = await html2canvas(table, {
           backgroundColor: '#ffffff',
+          ignoreElements: isBrowserExtensionElement,
           logging: false,
+          onclone: (_document, clonedTable) => sanitizeHtml2CanvasColors(clonedTable),
           scale,
           useCORS: true,
         });

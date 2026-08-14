@@ -434,17 +434,17 @@ export const useGridOptions = () => {
   }, DEBOUNCE_TIME);
 
   // onColumnResized will be called too much without debounce
-  const onColumnChanged = useDebouncedCallback(({ columnApi }: AgGridEvent) => {
+  const onColumnChanged = useDebouncedCallback(({ api }: AgGridEvent) => {
     log('>>onColumnChanged');
-    setAgGridColumnState(columnApi.getColumnState());
+    setAgGridColumnState(api.getColumnState());
   }, DEBOUNCE_TIME);
 
   const agGridFilterModel = useTkbStore(selectAgGridFilterModel);
   const agGridColumnState = useTkbStore(selectAgGridColumnState);
   const onGridReady = useCallback(
-    ({ api, columnApi }: GridReadyEvent<ClassModel, any>) => {
+    ({ api }: GridReadyEvent<ClassModel, any>) => {
       if (agGridColumnState?.length) {
-        columnApi.applyColumnState({ state: agGridColumnState });
+        api.applyColumnState({ state: agGridColumnState });
       }
       if (agGridFilterModel && Object.keys(agGridFilterModel).length) {
         api.setFilterModel(agGridFilterModel);
@@ -482,7 +482,7 @@ export const useGridOptions = () => {
   }, []);
 
   const getContextMenuItems = useCallback(
-    ({ value, column, api, columnApi }: GetContextMenuItemsParams<ClassModel>): (string | MenuItemDef)[] => {
+    ({ value, column, api }: GetContextMenuItemsParams<ClassModel>): (string | MenuItemDef)[] => {
       const { addToBlock, endOfBlock, constructFinal } = getContextMenuItemsBuilder();
       const headerName = column?.getColDef().headerName;
 
@@ -568,7 +568,7 @@ export const useGridOptions = () => {
       addToBlock('resetColumns', 'autoSizeAll');
       endOfBlock();
 
-      if (columnApi.getRowGroupColumns().length) {
+      if (api.getRowGroupColumns().length) {
         addToBlock('expandAll', 'contractAll');
       }
       endOfBlock();
